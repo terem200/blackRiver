@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 import * as qs from "querystring";
 import { General } from "../namespace/General";
 import EHttpMethods = General.EHttpMethods;
@@ -46,18 +46,24 @@ export default class AxiosController  implements General.IController {
     return this;
   }
 
-  body(data: Record<string, unknown>): this {
+  body<T extends Record<string, unknown>>(data: T): this {
     this.options = { ...this.options, body: data };
     return this;
   }
 
   async request<T>(method : General.EHttpMethods, path : string = "") {
-    return axios.request<T>({
+    const cfg : AxiosRequestConfig = {
       method,
       baseURL: this.options.baseUrl,
       url: path,
       params: this.options.queryParams,
-    });
+    }
+
+    if (method !== General.EHttpMethods.GET){
+      cfg.data = this.options.body
+    }
+
+    return axios.request<T>(cfg);
   }
 
   private prepareResponse<T>(res : AxiosResponse) : General.TResponse<T> {

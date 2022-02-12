@@ -3,6 +3,7 @@ export namespace General {
     baseUrl: string
     queryParams? : Record<string, unknown>,
     body? : Record<string, unknown>
+    headers?: Record<string, string>
   };
 
 
